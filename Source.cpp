@@ -94,6 +94,7 @@ void tutorial::UART()
     		USARTSend("\r\nI has received a line:\r\n");
     		USARTSend(RX_BUF);
     		USARTSend("\r\n");
+				
     		clear_RXBuffer();
     	}
     }
@@ -137,7 +138,7 @@ void tutorial::watchdog()
 void init()
 {
 	tutorial a;
-	a.LED();
+	a.UART();
 }
 
 

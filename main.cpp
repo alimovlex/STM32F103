@@ -9,12 +9,14 @@
 #include "stm32f10x_spi.h"              // Keil::Device:StdPeriph Drivers:SPI
 #include "stm32f10x_usart.h"            // Keil::Device:StdPeriph Drivers:USART
 #include "stm32f10x_wwdg.h"             // Keil::Device:StdPeriph Drivers:WWDG
-
 #include "Source.h"
+#include "stdio.h"
+#include "stdlib.h"
 
-
+using namespace std;
 int main(void)
 {
-	//init();
+	init();
+	
   return 0;
 }
