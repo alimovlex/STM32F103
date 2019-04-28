@@ -10,12 +10,17 @@
 #include "stm32f10x_usart.h"            // Keil::Device:StdPeriph Drivers:USART
 #include "stm32f10x_wwdg.h"             // Keil::Device:StdPeriph Drivers:WWDG
 #include "stm32f10x_pwr.h"              // Keil::Device:StdPeriph Drivers:PWR
+#include "stm32f10x_tim.h"              // Keil::Device:StdPeriph Drivers:TIM
+#include "stm32f10x_i2c.h"              // Keil::Device:StdPeriph Drivers:I2C
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "Source.h"
 #include "UART.h"
 #include "RTC.h"
+#include "Timer.h"
+#include "I2C.h"
+
 
 void tutorial::LED()
 {
@@ -192,10 +197,73 @@ void tutorial::Zeit()
     }
 }
 
+void tutorial::ItoC()
+{
+	char buffer[80] = {'\0'};
+  volatile unsigned char FLAG_USART;
+	long temperature = 0;
+	long pressure = 0;
+
+	I2C1_init();
+	//BMP280_Init();
+	usart_dma_init();
+
+	TIM4_init();
+
+    while(1)
+    {
+		if (FLAG_USART == 1) 
+			{
+			//bmp280Convert(&temperature, &pressure);
+			sprintf(buffer, "Temperature: %d, Pressure: %d\r\n", (int)temperature/10, (int)pressure);
+    		USARTSendDMA(buffer);
+			FLAG_USART = 0;
+    	}
+    }
+}
+
+void tutorial::mem_access()
+{
+	volatile char RX_BUF[80] = {'\0'};
+	volatile char RX_FLAG_END_LINE = 0;
+	// Set System clock
+    SetSysClockTo72();
+ 
+    /* Initialize LED which connected to PC13 */
+    GPIO_InitTypeDef  GPIO_InitStructure;
+    // Enable PORTC Clock
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+    /* Configure the GPIO_LED pin */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+ 
+    GPIO_ResetBits(GPIOC, GPIO_Pin_13); // Set C13 to Low level ("0")
+ 
+    // Initialize USART
+    usart_dma_init();
+    USARTSendDMA("Hello.\r\nUSART1 is ready.\r\n");
+ 
+    while (1)
+    {
+        if (RX_FLAG_END_LINE == 1) 
+					{
+            // Reset END_LINE Flag
+            RX_FLAG_END_LINE = 0;
+ 
+            /* !!! This lines is not have effect. Just a last command USARTSendDMA(":\r\n"); !!!! */
+            USARTSendDMA("\r\nI has received a line:\r\n"); // no effect
+            //SARTSendDMA(RX_BUF); // no effect
+            USARTSendDMA(":\r\n"); // This command does not wait for the finish of the sending of buffer. It just write to buffer new information and restart sending via DMA.
+            clear_RXBuffer();
+        }
+    }
+}
 void init()
 {
 	tutorial a;
-	a.Zeit();
+	a.ItoC();
 }
 
 
