@@ -9,6 +9,8 @@
 #include "stm32f10x_spi.h"              // Keil::Device:StdPeriph Drivers:SPI
 #include "stm32f10x_usart.h"            // Keil::Device:StdPeriph Drivers:USART
 #include "stm32f10x_wwdg.h"             // Keil::Device:StdPeriph Drivers:WWDG
+#include "stm32f10x_tim.h"              // Keil::Device:StdPeriph Drivers:TIM
+#include "stm32f10x_pwr.h"              // Keil::Device:StdPeriph Drivers:PWR
 #include "Source.h"
 #include "stdio.h"
 #include "stdlib.h"

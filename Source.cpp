@@ -9,9 +9,13 @@
 #include "stm32f10x_spi.h"              // Keil::Device:StdPeriph Drivers:SPI
 #include "stm32f10x_usart.h"            // Keil::Device:StdPeriph Drivers:USART
 #include "stm32f10x_wwdg.h"             // Keil::Device:StdPeriph Drivers:WWDG
+#include "stm32f10x_pwr.h"              // Keil::Device:StdPeriph Drivers:PWR
 #include "string.h"
+#include "stdio.h"
+#include "stdlib.h"
 #include "Source.h"
 #include "UART.h"
+#include "RTC.h"
 
 void tutorial::LED()
 {
@@ -135,10 +139,63 @@ void tutorial::watchdog()
 
   }
 }
+
+void tutorial::Zeit()
+{
+	char buffer[80] = {'\0'};
+	uint32_t RTC_Counter = 0;
+	RTC_DateTimeTypeDef	RTC_DateTime;
+
+	SetSysClockToHSE();
+	TIM2_init();
+
+	usart_init();
+
+	if (RTC_Init() == 1) 
+		{
+		// Якщо перша ініціалізація RTC Встановлюємо початкову дату, наприклад 22.09.2016 14:30:00
+		RTC_DateTime.RTC_Date = 22;
+		RTC_DateTime.RTC_Month = 9;
+		RTC_DateTime.RTC_Year = 2016;
+
+		RTC_DateTime.RTC_Hours = 14;
+		RTC_DateTime.RTC_Minutes = 30;
+		RTC_DateTime.RTC_Seconds = 00;
+
+		// Після ініціалізації потрібна затримка. Без неї час не встановлюється.
+		delay_ms(500);
+		RTC_SetCounter(RTC_GetRTC_Counter(&RTC_DateTime));
+	}
+
+	while(1)
+    {
+    	RTC_Counter = RTC_GetCounter();
+    	sprintf(buffer, "\r\n\r\nCOUNTER: %d\r\n", (int)RTC_Counter);
+		USARTSend(buffer);
+
+		RTC_GetDateTime(RTC_Counter, &RTC_DateTime);
+		sprintf(buffer, "%02d.%02d.%04d  %02d:%02d:%02d\r\n",
+				RTC_DateTime.RTC_Date, RTC_DateTime.RTC_Month, RTC_DateTime.RTC_Year,
+				RTC_DateTime.RTC_Hours, RTC_DateTime.RTC_Minutes, RTC_DateTime.RTC_Seconds);
+		USARTSend(buffer);
+
+		// Функція генерує у буфері дату власного формату
+		RTC_GetMyFormat(&RTC_DateTime, buffer);
+		USARTSend(buffer);
+
+		/* delay */
+		while (RTC_Counter == RTC_GetCounter()) 
+			{
+
+		}
+
+    }
+}
+
 void init()
 {
 	tutorial a;
-	a.UART();
+	a.Zeit();
 }
 
 
