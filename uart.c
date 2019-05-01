@@ -116,4 +116,10 @@ void USART2_IRQHandler(void)
 	}
 }
 
-
+uint16_t USART2_GetChar(void)
+{
+	// Wait until data is received
+	while (!USART_GetFlagStatus(USART2, USART_FLAG_RXNE));
+	// Read received char
+	return USART_ReceiveData(USART2);
+}

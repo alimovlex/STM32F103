@@ -1,10 +1,15 @@
 #include "stm32f10x.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
+#include "stm32f10x_i2c.h"              // Keil::Device:StdPeriph Drivers:I2C
 #include "delay.h"
 #include "uart.h"
 #include "dma.h"
+#include "timer.h"
+#include "I2C.h"
+#define SLAVE_ADDRESS		0x08
 GPIO_InitTypeDef GPIOInitStruct;
+uint8_t receivedByte;
 void LED()
 {
 		// Initialize delay functions
@@ -61,6 +66,36 @@ void button(void)
 	}
 }
 
+void timer(void)
+{
+	DelayInit();
+	
+	// Initialize timer interrupt
+	TIM2_INT_Init();
+	
+	// Initialize PB12 as push-pull output for LED
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	GPIOInitStruct.GPIO_Pin = GPIO_Pin_12;
+	GPIOInitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIOInitStruct.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOB, &GPIOInitStruct);
+	// Initialize PC13 as push-pull output for LED
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	GPIOInitStruct.GPIO_Pin = GPIO_Pin_13;
+	GPIOInitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIOInitStruct.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOC, &GPIOInitStruct);
+	
+	while (1)
+	{
+		// Blink LED on PC13
+		GPIOC->BRR = GPIO_Pin_13;
+		DelayMs(2500);
+		GPIOC->BSRR = GPIO_Pin_13;
+		DelayMs(2500);
+	}
+}
+
 void UART(void)
 {
 	DelayInit();
@@ -98,3 +133,50 @@ void DMA(void)
 	{
 	}
 }
+
+void I2C(void)
+{
+	DelayInit();
+	//lcd16x2_init(LCD16X2_DISPLAY_ON_CURSOR_OFF_BLINK_OFF);
+	
+	// Initialize I2C
+	i2c_init();
+	
+	while (1)
+	{
+		// Write 0x01 to slave (turn on LED blinking)
+		i2c_write(SLAVE_ADDRESS, 0x01);
+		DelayMs(5);
+		// Read LED blinking status (off/on)
+		i2c_read(SLAVE_ADDRESS, &receivedByte);
+		// Display LED blinking status
+		//lcd16x2_clrscr();
+		if (receivedByte == 0)
+		{
+			//lcd16x2_puts("LED Blinking Off");
+		}
+		else if (receivedByte == 1)
+		{
+			//lcd16x2_puts("LED Blinking On");
+		}
+		DelayMs(2500);
+		
+		// Write 0x00 to slave (turn off LED blinking)
+		i2c_write(SLAVE_ADDRESS, 0x00);
+		DelayMs(5);
+		// Read LED blinking status (off/on)
+		i2c_read(SLAVE_ADDRESS, &receivedByte);
+		// Display LED blinking status
+		//lcd16x2_clrscr();
+		if (receivedByte == 0)
+		{
+			//lcd16x2_puts("LED Blinking Off");
+		}
+		else if (receivedByte == 1)
+		{
+			//lcd16x2_puts("LED Blinking On");
+		}
+		DelayMs(2500);
+	}
+}
+

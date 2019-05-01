@@ -7,3 +7,6 @@ void LED(void);
 void UART(void);
 void button(void);
 void DMA(void);
+void timer(void);
+void I2C(void);
+
