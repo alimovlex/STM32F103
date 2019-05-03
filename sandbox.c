@@ -7,6 +7,7 @@
 #include "dma.h"
 #include "timer.h"
 #include "I2C.h"
+#include "SPI.h"
 #define SLAVE_ADDRESS		0x08
 GPIO_InitTypeDef GPIOInitStruct;
 uint8_t receivedByte;
@@ -180,3 +181,61 @@ void I2C(void)
 	}
 }
 
+void SPI(void)
+{
+	DelayInit();
+	//lcd16x2_init(LCD16X2_DISPLAY_ON_CURSOR_OFF_BLINK_OFF);
+	
+	SPIx_Init();
+	
+	while (1)
+	{
+		// Enable slave
+		SPIx_EnableSlave();
+		// Write command to slave to turn on LED blinking
+		SPIx_Transfer((uint8_t) '1');
+		DelayUs(10);
+		// Write command to slave for asking LED blinking status
+		SPIx_Transfer((uint8_t) '?');
+		DelayUs(10);
+		// Read LED blinking status (off/on) from slave by transmitting dummy byte
+		receivedByte = SPIx_Transfer(0);
+		// Disable slave
+		SPIx_DisableSlave();
+		// Display LED blinking status
+		//lcd16x2_clrscr();
+		if (receivedByte == 0)
+		{
+			//lcd16x2_puts("LED Blinking Off");
+		}
+		else if (receivedByte == 1)
+		{
+			//lcd16x2_puts("LED Blinking On");
+		}
+		DelayMs(2500);
+		
+		// Enable slave
+		SPIx_EnableSlave();
+		// Write command to slave to turn off LED blinking
+		SPIx_Transfer((uint8_t) '0');
+		DelayUs(10);
+		// Write command to slave for asking LED blinking status
+		SPIx_Transfer((uint8_t) '?');
+		DelayUs(10);
+		// Read LED blinking status (off/on) from slave by transmitting dummy byte
+		receivedByte = SPIx_Transfer(0);
+		// Disable slave
+		SPIx_DisableSlave();
+		// Display LED blinking status
+		//lcd16x2_clrscr();
+		if (receivedByte == 0)
+		{
+			//lcd16x2_puts("LED Blinking Off");
+		}
+		else if (receivedByte == 1)
+		{
+			//lcd16x2_puts("LED Blinking On");
+		}
+		DelayMs(2500);
+	}
+}

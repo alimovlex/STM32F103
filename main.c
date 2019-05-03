@@ -4,9 +4,8 @@
 #include "delay.h"
 #include "sandbox.h"
 
-
 int main(void)
 {
-timer();
+LED();
 }
 
