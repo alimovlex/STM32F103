@@ -6,6 +6,6 @@
 
 int main(void)
 {
-LED();
+timer();
 }
 

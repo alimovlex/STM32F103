@@ -6,8 +6,8 @@
 #include "uart.h"
 #include "dma.h"
 #include "timer.h"
-#include "I2C.h"
-#include "SPI.h"
+#include "i2c.h"
+#include "spi.h"
 #define SLAVE_ADDRESS		0x08
 GPIO_InitTypeDef GPIOInitStruct;
 uint8_t receivedByte;
