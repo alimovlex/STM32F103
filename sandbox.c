@@ -7,8 +7,8 @@
 #include "timer.h"
 #include "i2c.h"
 #include "spi.h"
+#include "usart.h"
 #include "ff.h"
-#include "esp8266.h"
 #define SLAVE_ADDRESS		0x08
 GPIO_InitTypeDef GPIOInitStruct;
 uint8_t receivedByte;
@@ -247,56 +247,3 @@ void sd_card(void)
     {
     }
 }
-
-void wifi(void)
-{
-	u8 line_ready = 0;
-char packet[128];
-char* ip_address = "192.168.0.16";
-	
-	 // Initialize USART to WIFI module
-    USART1_Init();
-    // Initialize USART to PC
-    USART2_Init();
-
-    // Setup NVIC
-    //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-	// Setup SysTick
-usart2_print("Setting Core clock\r\n");
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-    if (SysTick_Config(SystemCoreClock / 1000))  
-		while (1);
-    usart2_print("Done\r\n");
-    // Initialize WIFI module
-    esp8266_init(&line_ready);
-    esp8266_send_data(ip_address, 5000, UDP, packet, strlen(packet));
-    esp8266_wait_for_answer();
-    // Required in case of UDP, if removed - all packets will be send on port 6000
-    esp8266_close_connection();
-
-    usart2_print("Done\r\n");
-
-	char greeting[] = "Hello, world!";
-	esp8266_send_data(ip_address, 5000, UDP, greeting, strlen(greeting));
-    esp8266_wait_for_answer();
-    esp8266_close_connection();
-
-    int num = 0;
-
-    usart2_print("System ready\r\n");
-		
-		 while(1)
-    {
-        if (++num % 10 == 0) 
-				{
-            esp8266_send_data(ip_address, 5000, UDP, packet, strlen(packet));
-        }
-        memset(packet, 0, 128);
-        strcat(packet, "2"); // Type of packet (2 - sensors data)
-        usart2_print(packet);
-        esp8266_send_data(ip_address, 5000, UDP, packet, strlen(packet));
-        esp8266_wait_for_answer();
-       esp8266_close_connection();
-    }
-}
-

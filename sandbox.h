@@ -10,7 +10,7 @@ void timer(void);
 void I2C(void);
 void SPI(void);
 void sd_card(void);
-void wifi(void);
+
 
 
 

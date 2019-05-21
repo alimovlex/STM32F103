@@ -19,16 +19,15 @@ void usart2_print(char* c) {
 
 void USART1_Init(void)
 {
+	  NVIC_InitTypeDef NVIC_InitStructure; // Configure the NVIC (nested vector interrupt controller)
+	 // Use PA9 and PA10
+    GPIO_InitTypeDef GPIO_InitStructure;
+    USART_InitTypeDef USART_InitStructure;
     /* Enable GPIO clock */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
     /* Enable UART clock */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
-
-    // Use PA9 and PA10
-    GPIO_InitTypeDef GPIO_InitStructure;
-    USART_InitTypeDef USART_InitStructure;
-
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -39,7 +38,7 @@ void USART1_Init(void)
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     // NVIC
-    NVIC_InitTypeDef NVIC_InitStructure; // Configure the NVIC (nested vector interrupt controller)
+    
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
     NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;   // we want to configure the USART1 interrupts
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;     // this sets the priority group of the USART1 interrupts
@@ -69,6 +68,8 @@ void USART1_Init(void)
 
 void USART2_Init(void)
 {
+	  GPIO_InitTypeDef GPIO_InitStructure;
+    USART_InitTypeDef USART_InitStructure;
     /* Enable GPIO clock */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
@@ -76,8 +77,7 @@ void USART2_Init(void)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 
     // Use PA2 and PA3
-    GPIO_InitTypeDef GPIO_InitStructure;
-    USART_InitTypeDef USART_InitStructure;
+    
 
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
