@@ -322,7 +322,7 @@
             <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\bus\inc;.\bus\src;.\sd\inc;.\sd\src</IncludePath>
+              <IncludePath>.\bus\inc;.\bus\src;.\sd\inc;.\sd\src;.\wifi\inc;.\wifi\src</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -398,14 +398,14 @@
               <FilePath>.\bus\src\dma.c</FilePath>
             </File>
             <File>
-              <FileName>I2C.c</FileName>
+              <FileName>i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\bus\src\I2C.c</FilePath>
+              <FilePath>.\bus\src\i2c.c</FilePath>
             </File>
             <File>
-              <FileName>SPI.c</FileName>
+              <FileName>spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\bus\src\SPI.c</FilePath>
+              <FilePath>.\bus\src\spi.c</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>
@@ -413,9 +413,14 @@
               <FilePath>.\bus\src\timer.c</FilePath>
             </File>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\bus\src\uart.c</FilePath>
+              <FilePath>.\bus\src\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>printf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\wifi\src\printf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -438,14 +443,14 @@
               <FilePath>.\bus\inc\dma.h</FilePath>
             </File>
             <File>
-              <FileName>I2C.h</FileName>
+              <FileName>i2c.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\bus\inc\I2C.h</FilePath>
+              <FilePath>.\bus\inc\i2c.h</FilePath>
             </File>
             <File>
-              <FileName>SPI.h</FileName>
+              <FileName>spi.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\bus\inc\SPI.h</FilePath>
+              <FilePath>.\bus\inc\spi.h</FilePath>
             </File>
             <File>
               <FileName>timer.h</FileName>
@@ -453,9 +458,9 @@
               <FilePath>.\bus\inc\timer.h</FilePath>
             </File>
             <File>
-              <FileName>uart.h</FileName>
+              <FileName>usart.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\bus\inc\uart.h</FilePath>
+              <FilePath>.\bus\inc\usart.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -463,19 +468,19 @@
           <GroupName>SD_src</GroupName>
           <Files>
             <File>
-              <FileName>fatfs_diskio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\sd\src\fatfs_diskio.c</FilePath>
-            </File>
-            <File>
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\sd\src\ff.c</FilePath>
             </File>
             <File>
-              <FileName>sdcard.c</FileName>
+              <FileName>ffunicode.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\sd\src\sdcard.c</FilePath>
+              <FilePath>.\sd\src\ffunicode.c</FilePath>
+            </File>
+            <File>
+              <FileName>mmc_stm32f1_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sd\src\mmc_stm32f1_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -498,14 +503,29 @@
               <FilePath>.\sd\inc\ffconf.h</FilePath>
             </File>
             <File>
-              <FileName>integer.h</FileName>
+              <FileName>stm32f100.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\sd\inc\integer.h</FilePath>
+              <FilePath>.\sd\inc\stm32f100.h</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>wifi_src</GroupName>
+          <Files>
             <File>
-              <FileName>sdcard.h</FileName>
+              <FileName>esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\wifi\src\esp8266.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>wifi_head</GroupName>
+          <Files>
+            <File>
+              <FileName>esp8266.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\sd\inc\sdcard.h</FilePath>
+              <FilePath>.\wifi\inc\esp8266.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -560,6 +580,12 @@
       </component>
       <component Cclass="Device" Cgroup="StdPeriph Drivers" Csub="RCC" Cvendor="Keil" Cversion="3.5.0" condition="STM32F1xx STDPERIPH">
         <package name="STM32F1xx_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="Keil" version="2.0.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103C8"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="StdPeriph Drivers" Csub="RTC" Cvendor="Keil" Cversion="3.5.0" condition="STM32F1xx STDPERIPH">
+        <package name="STM32F1xx_DFP" schemaVersion="1.4.0" url="http://www.keil.com/pack/" vendor="Keil" version="2.3.0"/>
         <targetInfos>
           <targetInfo name="STM32F103C8"/>
         </targetInfos>
