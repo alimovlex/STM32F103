@@ -231,13 +231,12 @@ void SPI(void)
 void sd_card(void)
 {
 	char	buff[1024];	
-	char *str;
+
 	FATFS FATFS_Obj;
 	DIR dir;
 	FIL file;
 	UINT nRead, nWritten;
 	static uint8_t ReciveByte=0x00; 		
-	char empty[] = " ";
 	USART2_Init();
 	f_mount(&FATFS_Obj, "0", 1);
 	f_opendir(&dir, "/");
@@ -259,13 +258,13 @@ f_lseek(&file, f_size(&file));
 
 void UART(void)	
 {	
-	char *str;
+	
 	USART2_Init();	
-
+  
  	while (1)	
 	{	
 		
-		USART2_PutChar(&str);
+	
 	}	
 }
 
