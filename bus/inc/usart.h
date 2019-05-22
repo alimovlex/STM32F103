@@ -1,30 +1,6 @@
-#ifndef __USART_H__
-#define __USART_H__
-#include <stm32f10x.h>
-#include "stm32f10x_gpio.h"
-#include <stm32f10x_usart.h>
-#include <stm32f10x_rcc.h>
-#include <misc.h>
-#include <string.h>
+void USART2_Init(void);	
+void USART2_PutChar(char c);	
+void USART2_PutString(char *s);	
+void USART2_IRQHandler(void);	
+uint16_t USART2_GetChar(void);
 
-#define received_string_length 200
-
-void USART1_IRQHandler(void);
-
-void USART1_Init(void);
-void USART2_Init(void);
-
-void usart1_print(const char* c);
-void usart2_print(char* c);
-
-void PrintChar(char c);
-void PrintCharPc(char c);
-
-void usart_string_append(char c);
-char usart_get_previous_char(void);
-void usart_clear_string(void);
-
-char* usart_get_string(void);
-u8 usart_get_string_length(void);
-
-#endif

@@ -231,11 +231,14 @@ void SPI(void)
 void sd_card(void)
 {
 	char	buff[1024];	
+	char *str;
 	FATFS FATFS_Obj;
 	DIR dir;
 	FIL file;
 	UINT nRead, nWritten;
-	//USART2_Init();
+	static uint8_t ReciveByte=0x00; 		
+	char empty[] = " ";
+	USART2_Init();
 	f_mount(&FATFS_Obj, "0", 1);
 	f_opendir(&dir, "/");
 	f_mkdir("0:UARTdata");
@@ -245,5 +248,24 @@ void sd_card(void)
 	
 	while(1)
     {
+	ReciveByte = USART2_GetChar();
+f_open(&file, "0:UARTdata/data.txt", FA_OPEN_EXISTING | FA_WRITE);
+f_lseek(&file, f_size(&file));
+	f_write(&file, &ReciveByte, sizeof(ReciveByte), &nWritten);
+	f_close(&file);	
+			USART2_PutChar(ReciveByte);
     }
 }
+
+void UART(void)	
+{	
+	char *str;
+	USART2_Init();	
+
+ 	while (1)	
+	{	
+		
+		USART2_PutChar(&str);
+	}	
+}
+
