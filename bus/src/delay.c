@@ -1,50 +1,25 @@
-/**
-  ******************************************************************************
-  * @file		delay.c
-  * @author	Yohanes Erwin Setiawan
-  * @date		10 January 2016
-  ******************************************************************************
-  */
-	
+#include "stm32f10x.h"
+#include "stm32f10x_gpio.h"
+#include "stm32f10x_rcc.h"
 #include "delay.h"
 
-// For store tick counts in us
-static __IO uint32_t usTicks;
-
-// SysTick_Handler function will be called every 1 us
-void SysTick_Handler()
+void Delay(uint32_t ms)
 {
-	if (usTicks != 0)
-	{
-		usTicks--;
-	}
+        volatile uint32_t nCount;
+        RCC_ClocksTypeDef RCC_Clocks;
+        RCC_GetClocksFreq (&RCC_Clocks);
+
+        nCount=(RCC_Clocks.HCLK_Frequency/10000)*ms;
+        for (; nCount!=0; nCount--);
 }
 
-void DelayInit()
-{
-	// Update SystemCoreClock value
-	SystemCoreClockUpdate();
-	// Configure the SysTick timer to overflow every 1 us
-	SysTick_Config(SystemCoreClock / 1000000);
-}
 
-void DelayUs(uint32_t us)
+void DelayMC(uint32_t mc)
 {
-	// Reload us value
-	usTicks = us;
-	// Wait until usTick reach zero
-	while (usTicks);
-}
+        volatile uint32_t nCount;
+        RCC_ClocksTypeDef RCC_Clocks;
+        RCC_GetClocksFreq (&RCC_Clocks);
 
-void DelayMs(uint32_t ms)
-{
-	// Wait until ms reach zero
-	while (ms--)
-	{
-		// Delay 1ms
-		DelayUs(1000);
-	}
+        nCount=(RCC_Clocks.HCLK_Frequency/10000000)*mc;
+        for (; nCount!=0; nCount--);
 }
-
-/********************************* END OF FILE ********************************/
-/******************************************************************************/

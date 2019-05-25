@@ -6,7 +6,7 @@
 
 int main(void)
 {
-	timer();
-	
+	//button();	
+	lcd();
 }
 

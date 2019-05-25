@@ -3,20 +3,17 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_i2c.h"              // Keil::Device:StdPeriph Drivers:I2C
 #include "delay.h"
-#include "dma.h"
 #include "timer.h"
 #include "i2c.h"
-#include "spi.h"
 #include "usart.h"
 #include "ff.h"
-#define SLAVE_ADDRESS		0x08
+#include "LiquidCrystal_I2C.h"
+#include "lcd_i2c.h"
+//#define SLAVE_ADDRESS		0x08
 GPIO_InitTypeDef GPIOInitStruct;
-uint8_t receivedByte;
 void LED()
 {
-		// Initialize delay functions
-	DelayInit();
-	
+		
 	// Initialize GPIOA as output for LED
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 	GPIOInitStruct.GPIO_Pin = GPIO_Pin_13;
@@ -28,9 +25,9 @@ void LED()
 	{
 		/* LED blink every 1s */
 		GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-		DelayMs(1000);
+		Delay(1000);
 		GPIO_SetBits(GPIOC, GPIO_Pin_13);
-		DelayMs(1000);
+		Delay(1000);
 	}
 }
 
@@ -43,7 +40,6 @@ void button(void)
 	GPIOInitStruct.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_Init(GPIOA, &GPIOInitStruct);
-	DelayInit();
 	
 	// Initialize GPIOA as output for LED
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -70,8 +66,7 @@ void button(void)
 
 void timer(void)
 {
-	DelayInit();
-	
+
 	// Initialize timer interrupt
 	TIM2_INT_Init();
 	
@@ -92,142 +87,12 @@ void timer(void)
 	{
 		// Blink LED on PC13
 		GPIOC->BRR = GPIO_Pin_13;
-		DelayMs(2500);
+		DelayMC(2500);
 		GPIOC->BSRR = GPIO_Pin_13;
-		DelayMs(2500);
+		Delay(2500);
 	}
 }
 
-
-void DMA(void)
-{
-	DelayInit();
-	//lcd16x2_init(LCD16X2_DISPLAY_ON_CURSOR_OFF_BLINK_OFF);
-	
-	// Initialize PA0 for button input
-	GPIOInitStruct.GPIO_Pin = GPIO_Pin_0;
-	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IPU;
-	GPIOInitStruct.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIOInitStruct);
-	// Initialize DMA
-	DMA1_Init();
-	
-	// Wait until button is pressed
-	//lcd16x2_clrscr();
-	//lcd16x2_puts("Press Button to\nStart Transfer");
-	while (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0));
-	// Start transfer data using DMA
-	DMA_Cmd(DMA1_Channel1, ENABLE);
-
-	while (1)
-	{
-	}
-}
-
-void I2C(void)
-{
-	DelayInit();
-	//lcd16x2_init(LCD16X2_DISPLAY_ON_CURSOR_OFF_BLINK_OFF);
-	
-	// Initialize I2C
-	i2c_init();
-	
-	while (1)
-	{
-		// Write 0x01 to slave (turn on LED blinking)
-		i2c_write(SLAVE_ADDRESS, 0x01);
-		DelayMs(5);
-		// Read LED blinking status (off/on)
-		i2c_read(SLAVE_ADDRESS, &receivedByte);
-		// Display LED blinking status
-		//lcd16x2_clrscr();
-		if (receivedByte == 0)
-		{
-			//lcd16x2_puts("LED Blinking Off");
-		}
-		else if (receivedByte == 1)
-		{
-			//lcd16x2_puts("LED Blinking On");
-		}
-		DelayMs(2500);
-		
-		// Write 0x00 to slave (turn off LED blinking)
-		i2c_write(SLAVE_ADDRESS, 0x00);
-		DelayMs(5);
-		// Read LED blinking status (off/on)
-		i2c_read(SLAVE_ADDRESS, &receivedByte);
-		// Display LED blinking status
-		//lcd16x2_clrscr();
-		if (receivedByte == 0)
-		{
-			//lcd16x2_puts("LED Blinking Off");
-		}
-		else if (receivedByte == 1)
-		{
-			//lcd16x2_puts("LED Blinking On");
-		}
-		DelayMs(2500);
-	}
-}
-
-void SPI(void)
-{
-	DelayInit();
-	//lcd16x2_init(LCD16X2_DISPLAY_ON_CURSOR_OFF_BLINK_OFF);
-	
-	SPIx_Init();
-	
-	while (1)
-	{
-		// Enable slave
-		SPIx_EnableSlave();
-		// Write command to slave to turn on LED blinking
-		SPIx_Transfer((uint8_t) '1');
-		DelayUs(10);
-		// Write command to slave for asking LED blinking status
-		SPIx_Transfer((uint8_t) '?');
-		DelayUs(10);
-		// Read LED blinking status (off/on) from slave by transmitting dummy byte
-		receivedByte = SPIx_Transfer(0);
-		// Disable slave
-		SPIx_DisableSlave();
-		// Display LED blinking status
-		//lcd16x2_clrscr();
-		if (receivedByte == 0)
-		{
-			//lcd16x2_puts("LED Blinking Off");
-		}
-		else if (receivedByte == 1)
-		{
-			//lcd16x2_puts("LED Blinking On");
-		}
-		DelayMs(2500);
-		
-		// Enable slave
-		SPIx_EnableSlave();
-		// Write command to slave to turn off LED blinking
-		SPIx_Transfer((uint8_t) '0');
-		DelayUs(10);
-		// Write command to slave for asking LED blinking status
-		SPIx_Transfer((uint8_t) '?');
-		DelayUs(10);
-		// Read LED blinking status (off/on) from slave by transmitting dummy byte
-		receivedByte = SPIx_Transfer(0);
-		// Disable slave
-		SPIx_DisableSlave();
-		// Display LED blinking status
-		//lcd16x2_clrscr();
-		if (receivedByte == 0)
-		{
-			//lcd16x2_puts("LED Blinking Off");
-		}
-		else if (receivedByte == 1)
-		{
-			//lcd16x2_puts("LED Blinking On");
-		}
-		DelayMs(2500);
-	}
-}
 void sd_card(void)
 {
 	char	buff[1024];	
@@ -236,8 +101,8 @@ void sd_card(void)
 	DIR dir;
 	FIL file;
 	UINT nRead, nWritten;
-	static uint8_t ReciveByte=0x00; 		
-	USART2_Init();
+//	static uint8_t ReciveByte=0x00; 		
+	USART1_Init();
 	f_mount(&FATFS_Obj, "0", 1);
 	f_opendir(&dir, "/");
 	f_mkdir("0:UARTdata");
@@ -245,26 +110,91 @@ void sd_card(void)
 	f_write(&file, &buff, nRead, &nWritten);
 	f_close(&file);
 	
-	while(1)
-    {
-	ReciveByte = USART2_GetChar();
-f_open(&file, "0:UARTdata/data.txt", FA_OPEN_EXISTING | FA_WRITE);
-f_lseek(&file, f_size(&file));
-	f_write(&file, &ReciveByte, sizeof(ReciveByte), &nWritten);
-	f_close(&file);	
-			USART2_PutChar(ReciveByte);
-    }
 }
 
-void UART(void)	
-{	
-	
-	USART2_Init();	
+void lcd(void)
+{
+	//  USART1_Init(); //????? ??????? ????????????? ?????????
+  int i;
+//  uint8_t data;
+    //????????? ??????? ? ?????? ??????
+/*  while(1)
+  {
+    if((USART1->SR & USART_SR_RXNE)) //????????? ??????????? ?????? ?? ??????????
+    {
+      data = USART1->DR; //????????? ???????? ??????
+    //  Usart1_Send_symbol(data); //? ??? ?? ???????? ?? ???????
+      break;
+    }
+  }*/
+  Delay(3000);
+//  Usart1_Send_String("Start");
+
+  LCDI2C_init(0x27,20,4);
+  // ------- Quick 3 blinks of backlight  -------------
   
- 	while (1)	
-	{	
-		
-	
-	}	
+  for( i = 0; i< 3; i++)
+  {
+    LCDI2C_backlight();
+    Delay(250);
+    LCDI2C_noBacklight();
+    Delay(250);
+  }
+  LCDI2C_backlight(); // finish with backlight on
+
+
+  LCDI2C_write(53);
+//  Usart1_Send_String("End");
+  Delay(2000);
+  LCDI2C_clear();
+
+  displayKeyCodes();
+
+  Delay(2000);
+/*
+  LCDI2C_createChar(0, bell);
+//  Usart1_Send_String("char1");
+  LCDI2C_createChar(1, note);
+  LCDI2C_createChar(2, clock);
+  LCDI2C_createChar(3, heart);
+  LCDI2C_createChar(4, duck);
+  LCDI2C_createChar(5, check);
+  LCDI2C_createChar(6, cross);
+  LCDI2C_createChar(7, retarrow);
+  LCDI2C_clear();
+//  Usart1_Send_String("endchar");
+
+//    int i;
+  for (i=0; i<8; i++) {
+        LCDI2C_write(i);
+  }
+
+  Delay(3000);*/
+    //????????? ??????
+  LCDI2C_createChar(0, habr1);
+  LCDI2C_createChar(1, habr2);
+  LCDI2C_createChar(2, habr3);
+  LCDI2C_createChar(3, habr4);
+  LCDI2C_createChar(4, habr5);
+  LCDI2C_createChar(5, habr6);
+  LCDI2C_createChar(6, habr7);
+  LCDI2C_createChar(7, habr8);
+
+  LCDI2C_clear();
+  LCDI2C_write_String("HELLO MGTOW!");
+  LCDI2C_setCursor(16,0);
+  LCDI2C_write(0);
+  LCDI2C_write(1);
+  LCDI2C_write(2);
+  LCDI2C_write(3);
+  LCDI2C_setCursor(16,1);
+  LCDI2C_write(4);
+  LCDI2C_write(5);
+  LCDI2C_write(6);
+  LCDI2C_write(7);
+  LCDI2C_setCursor(16,2);
+  LCDI2C_write(201);
+  LCDI2C_write(177);
+  LCDI2C_write(162);
 }
 

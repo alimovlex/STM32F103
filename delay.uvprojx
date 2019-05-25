@@ -322,7 +322,7 @@
             <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>1</uC99>
+            <uC99>0</uC99>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\bus\inc;.\bus\src;.\sd\inc;.\sd\src;.\wifi\inc;.\wifi\src</IncludePath>
+              <IncludePath>.\bus\inc;.\bus\src;.\sd\inc;.\sd\src;.\lcd\inc;.\lcd\src</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -393,19 +393,9 @@
               <FilePath>.\bus\src\delay.c</FilePath>
             </File>
             <File>
-              <FileName>dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\bus\src\dma.c</FilePath>
-            </File>
-            <File>
               <FileName>i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\bus\src\i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\bus\src\spi.c</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>
@@ -413,14 +403,9 @@
               <FilePath>.\bus\src\timer.c</FilePath>
             </File>
             <File>
-              <FileName>usart.c</FileName>
+              <FileName>USART.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\bus\src\usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>printf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\wifi\src\printf.c</FilePath>
+              <FilePath>.\bus\src\USART.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -438,19 +423,9 @@
               <FilePath>.\bus\inc\delay.h</FilePath>
             </File>
             <File>
-              <FileName>dma.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\bus\inc\dma.h</FilePath>
-            </File>
-            <File>
               <FileName>i2c.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\bus\inc\i2c.h</FilePath>
-            </File>
-            <File>
-              <FileName>spi.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\bus\inc\spi.h</FilePath>
             </File>
             <File>
               <FileName>timer.h</FileName>
@@ -458,9 +433,9 @@
               <FilePath>.\bus\inc\timer.h</FilePath>
             </File>
             <File>
-              <FileName>usart.h</FileName>
+              <FileName>USART.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\bus\inc\usart.h</FilePath>
+              <FilePath>.\bus\inc\USART.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -510,22 +485,27 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>wifi_src</GroupName>
+          <GroupName>LCD_src</GroupName>
           <Files>
             <File>
-              <FileName>esp8266.c</FileName>
+              <FileName>LiquidCrystal_I2C.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\wifi\src\esp8266.c</FilePath>
+              <FilePath>.\lcd\src\LiquidCrystal_I2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lcd\src\lcd_i2c.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>wifi_head</GroupName>
+          <GroupName>LCD_head</GroupName>
           <Files>
             <File>
-              <FileName>esp8266.h</FileName>
+              <FileName>LiquidCrystal_I2C.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\wifi\inc\esp8266.h</FilePath>
+              <FilePath>.\lcd\inc\LiquidCrystal_I2C.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -549,7 +529,7 @@
         </targetInfos>
       </component>
       <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="1.0.0" condition="STM32F1xx CMSIS">
-        <package name="STM32F1xx_DFP" schemaVersion="1.2" url="http://www.keil.com/pack/" vendor="Keil" version="2.0.0"/>
+        <package name="STM32F1xx_DFP" schemaVersion="1.4.0" url="http://www.keil.com/pack/" vendor="Keil" version="2.3.0"/>
         <targetInfos>
           <targetInfo name="STM32F103C8"/>
         </targetInfos>
@@ -610,7 +590,7 @@
       </component>
     </components>
     <files>
-      <file attr="config" category="header" name="RTE_Driver\Config\RTE_Device.h" version="1.1.0">
+      <file attr="config" category="header" name="RTE_Driver\Config\RTE_Device.h" version="1.1.2">
         <instance index="0">RTE\Device\STM32F103C8\RTE_Device.h</instance>
         <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="1.0.0" condition="STM32F1xx CMSIS"/>
         <package name="STM32F1xx_DFP" schemaVersion="1.4.0" url="http://www.keil.com/pack/" vendor="Keil" version="2.3.0"/>

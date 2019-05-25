@@ -1,125 +1,62 @@
-#include "stm32f10x.h"	
-#include "stm32f10x_rcc.h"	
-#include "stm32f10x_gpio.h"	
-#include "stm32f10x_usart.h"	
-#include <stdio.h>	
-#include <stdlib.h>	
-#include <string.h>	
-#define BUF_SIZE	16	
-char buf[BUF_SIZE];	
+#include "stm32f10x.h"
+#include "stm32f10x_gpio.h"
+#include "stm32f10x_rcc.h"
+#include "stm32f10x_usart.h"
+#include "delay.h"
 
- void USART2_Init(void)	
-{	
-	// Initialization struct	
-	USART_InitTypeDef USART_InitStruct;	
-	GPIO_InitTypeDef GPIO_InitStruct;	
-	NVIC_InitTypeDef NVIC_InitStruct;	
+//Структуры для инициализации GPIOA и USART1
+GPIO_InitTypeDef    USART_GPIO_InitStruct;
+USART_InitTypeDef    USART_InitStruct;
 
- 	// Step 1: Initialize USART2	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);	
-	USART_InitStruct.USART_BaudRate = 9600;	
-	USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;	
-	USART_InitStruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;	
-	USART_InitStruct.USART_Parity = USART_Parity_No;	
-	USART_InitStruct.USART_StopBits = USART_StopBits_1;	
-	USART_InitStruct.USART_WordLength = USART_WordLength_8b;	
-	USART_Init(USART2, &USART_InitStruct);	
-	USART_Cmd(USART2, ENABLE);	
+//Функция инициализации периферии
+void USART1_Init(void)
+{
+  //Включаем тактирование GPIOA, USART1 и альтернативных функций AFIO
+  RCC_APB2PeriphClockCmd((RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO), ENABLE);
 
- 	// Step 2: Initialize GPIO for Tx and Rx pin	
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);	
-	// Tx pin (PA2) initialization as push-pull alternate function	
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_2;	
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;	
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;	
-	GPIO_Init(GPIOA, &GPIO_InitStruct);	
-	// Rx pin (PA3) initialization as input floating	
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_3;	
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;	
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;	
-	GPIO_Init(GPIOA, &GPIO_InitStruct);	
+  //Инициализации вывода PA9 - USART1_Tx
+  USART_GPIO_InitStruct.GPIO_Pin = GPIO_Pin_9; //Настройки вывода PA9
+  USART_GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; //Скорость порта
+  USART_GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP; //Режим альтернативной функции, выход Push-Pull
+  GPIO_Init(GPIOA, &USART_GPIO_InitStruct); //Заданные настройки сохраняем в регистрах GPIOА
 
- 	// Step 3: Enable USART receive interrupt	
-	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);	
+  //Инициализации вывода PA10 - USART1_Rx
+  USART_GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10; //Настройки вывода PA10
+  USART_GPIO_InitStruct.GPIO_Mode  = GPIO_Mode_IN_FLOATING; //Input floating
+  GPIO_Init(GPIOA, &USART_GPIO_InitStruct); //Заданные настройки сохраняем в регистрах GPIOА
 
- 	// Step 4: Initialize NVIC for USART IRQ	
-	// Set NVIC prority group to group 4 	
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);	
-	// Set System Timer IRQ at higher priority	
-	NVIC_SetPriority(SysTick_IRQn, 0);	
-	// Set USART2 IRQ at lower priority	
-	NVIC_InitStruct.NVIC_IRQChannel = USART2_IRQn;	
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 1;	
-	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;	
-	NVIC_Init(&NVIC_InitStruct);	
-}	
+  //Инициализация USART1
+  USART_InitStruct.USART_BaudRate = 9600; //Скорость обмена 9600 бод
+  USART_InitStruct.USART_WordLength = USART_WordLength_8b; //Длина слова 8 бит
+  USART_InitStruct.USART_StopBits = USART_StopBits_1; //1 стоп-бит
+  USART_InitStruct.USART_Parity = USART_Parity_No ; //Без проверки четности
+  USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None; //Без аппаратного контроля
+  USART_InitStruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx; //Включен передатчик и приемник USART1
+  USART_Init(USART1, &USART_InitStruct); //Заданные настройки сохраняем в регистрах USART1
 
- void USART2_PutChar(char c)	
-{	
-	// Wait until transmit data register is empty	
-	while (!USART_GetFlagStatus(USART2, USART_FLAG_TXE));	
-	// Send a char using USART2	
-	USART_SendData(USART2, c);	
-}	
-
- void USART2_PutString(char *s)	
-{	
-	// Send a string	
-	while (*s)	
-	{	
-		USART2_PutChar(*s++);	
-	}	
-}	
-
-
- void USART2_IRQHandler(void)	
-{	
-	// Check if the USART2 receive interrupt flag was set	
-	if (USART_GetITStatus(USART2, USART_IT_RXNE))	
-	{	
-		// Index for receive buffer	
-		static uint8_t i = 0;	
-
- 		// Read received char	
-		char c = USART_ReceiveData(USART2);	
-
- 		// Read chars until newline	
-		if (c != '\n')	
-		{	
-			// Concat char to buffer	
-			// If maximum buffer size is reached, then reset i to 0	
-			if (i < BUF_SIZE - 1)	
-			{	
-				buf[i] = c;	
-				i++;	
-			}	
-			else	
-			{	
-				buf[i] = c;	
-				i = 0;	
-			}	
-		}	
-		else	
-		{	
-			// Display received string to LCD	
-			//lcd16x2_clrscr();	
-			//lcd16x2_puts(buf);	
-
- 			// Echo received string to USART2	
-			USART2_PutString(buf);	
-			USART2_PutChar('\n');	
-
- 			// Clear buffer	
-			memset(&buf[0], 0, sizeof(buf));	
-			i = 0;	
-		}	
-	}	
-}	
-
- uint16_t USART2_GetChar(void)	
-{	
-	// Wait until data is received	
-	while (!USART_GetFlagStatus(USART2, USART_FLAG_RXNE));	
-	// Read received char	
-	return USART_ReceiveData(USART2);	
+  USART_Cmd(USART1, ENABLE); //Включаем USART1
 }
+
+//Функция передачи символа
+void Usart1_Send_symbol(uint8_t data)
+{
+  while(!(USART1->SR & USART_SR_TC)); //Проверяем установку флага TC - завершения предыдущей передачи
+  USART1->DR = data; //Записываем значение в регистр данных - передаем символ
+}
+
+//Функция передачи строки через USART
+void Usart1_Send_String(char* str)
+{
+  uint8_t i=0;
+  while(str[i])
+  {
+    Usart1_Send_symbol(str[i]);
+      Delay(400);
+    i++;
+  }
+  Usart1_Send_symbol('\n');
+      Delay(400);
+  Usart1_Send_symbol('\r');
+    Delay(400);
+}
+
