@@ -5,9 +5,9 @@ extern GPIO_InitTypeDef GPIO_InitStruct;
 void LED(void);
 void button(void);
 void timer(void);
+void demo(void);
+void usart(void);
 void lcd(void);
-
-
 
 
 

@@ -5,8 +5,9 @@
 #include "sandbox.h"
 
 int main(void)
-{
-	//button();	
+{	
 	lcd();
+	
+//	demo();
 }
 
