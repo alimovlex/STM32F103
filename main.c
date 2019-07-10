@@ -6,8 +6,7 @@
 
 int main(void)
 {	
-	lcd();
-	
-//	demo();
+	LED();
+
 }
 

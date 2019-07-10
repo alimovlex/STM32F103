@@ -131,7 +131,7 @@ BYTE CardType;			/* Card type flags */
 /*-----------------------------------------------------------------------*/
 
 /* Initialize MMC interface */
-static
+static 
 void init_spi (void)
 {
 	SPIxENABLE();		/* Enable SPI function */
