@@ -1,8 +1,5 @@
-#include "stm32f10x.h"
-#include "stm32f10x_gpio.h"
-#include "stm32f10x_rcc.h"
-#include "stm32f10x_usart.h"
-#include "delay.h"
+#include "stm32f10x_lib.h"
+#include "config.h"
 
 //Структуры для инициализации GPIOA и USART1
 GPIO_InitTypeDef    USART_GPIO_InitStruct;
@@ -35,28 +32,5 @@ void USART1_Init(void)
   USART_Init(USART1, &USART_InitStruct); //Заданные настройки сохраняем в регистрах USART1
 
   USART_Cmd(USART1, ENABLE); //Включаем USART1
-}
-
-//Функция передачи символа
-void Usart1_Send_symbol(uint8_t data)
-{
-  while(!(USART1->SR & USART_SR_TC)); //Проверяем установку флага TC - завершения предыдущей передачи
-  USART1->DR = data; //Записываем значение в регистр данных - передаем символ
-}
-
-//Функция передачи строки через USART
-void Usart1_Send_String(char* str)
-{
-  uint8_t i=0;
-  while(str[i])
-  {
-    Usart1_Send_symbol(str[i]);
-      Delay(400);
-    i++;
-  }
-  Usart1_Send_symbol('\n');
-      Delay(400);
-  Usart1_Send_symbol('\r');
-    Delay(400);
 }
 
