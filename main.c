@@ -16,7 +16,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_lib.h"
 #include "sandbox.h"
-#include "config.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -25,11 +24,7 @@ GPIO_InitTypeDef GPIO_InitStructure;
 
 int main(void)
 {
-#ifdef DEBUG
-  debug();
-#endif
-  RCC_Configuration();
-  NVIC_Configuration();
+  config();
   timer();
   return 0;
 }

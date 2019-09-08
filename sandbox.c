@@ -1,9 +1,17 @@
 #include "stm32f10x_lib.h"
 #include "config.h"
 #include "usart.h"
-//#include "ff.h"
 //#define SLAVE_ADDRESS		0x08
 GPIO_InitTypeDef GPIOInitStruct;
+
+void config(void)
+{
+#ifdef DEBUG
+  debug();
+#endif
+  RCC_Configuration();
+  NVIC_Configuration();
+}
 
 void LED(void)
 {
@@ -96,23 +104,9 @@ void usart(void)
 {
 	USART1_Init();
 }
-/*
+
 void sd_card(void)
 {
-	char	buff[1024];	
-
-	FATFS FATFS_Obj;
-	DIR dir;
-	FIL file;
-	UINT nRead, nWritten;
-//	static uint8_t ReciveByte=0x00; 		
-	USART1_Init();
-	f_mount(&FATFS_Obj, "0", 1);
-	f_opendir(&dir, "/");
-	f_mkdir("0:UARTdata");
-  f_open(&file, "0:UARTdata/data.txt", FA_CREATE_NEW | FA_READ | FA_WRITE);
-	f_write(&file, &buff, nRead, &nWritten);
-	f_close(&file);
-	
+		
 }
-*/
+

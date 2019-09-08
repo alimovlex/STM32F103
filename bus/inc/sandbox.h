@@ -3,5 +3,6 @@ void button(void);
 void timer(void);
 void usart(void);
 void sd_card(void);
+void config(void);
 
 

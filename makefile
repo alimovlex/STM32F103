@@ -1,6 +1,6 @@
 # setup
 COMPILE_OPTS = -mcpu=cortex-m3 -mthumb -Wall -g -O0
-INCLUDE_DIRS = -I . -I lib/inc -I bus/inc 
+INCLUDE_DIRS = -I . -I lib/inc -I bus/inc -I sd/inc
 LIBRARY_DIRS = -L lib
 
 CC = arm-none-eabi-gcc
@@ -29,8 +29,8 @@ MAIN_OUT_BIN = $(MAIN_OUT).bin
 all: $(MAIN_OUT_ELF) $(MAIN_OUT_BIN)
 
 # main
-$(MAIN_OUT_ELF): main.o bus/src/sandbox.o bus/src/config.o bus/src/usart.o lib/libstm32.a
-	$(LD) $(LDFLAGS) main.o bus/src/sandbox.o bus/src/config.o bus/src/usart.o lib/libstm32.a --output $@
+$(MAIN_OUT_ELF): main.o sandbox.o bus/src/config.o bus/src/usart.o  lib/libstm32.a
+	$(LD) $(LDFLAGS) main.o sandbox.o bus/src/config.o bus/src/usart.o lib/libstm32.a --output $@
 
 $(MAIN_OUT_BIN): $(MAIN_OUT_ELF)
 	$(OBJCP) $(OBJCPFLAGS) $< $@
