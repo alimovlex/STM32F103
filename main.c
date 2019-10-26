@@ -1,6 +1,6 @@
 /******************** (C) COPYRIGHT 2007 STMicroelectronics ********************
 * File Name          : main.c
-* Author             : MCD Application Team
+* Author             : alimovlex
 * Version            : V1.0
 * Date               : 10/08/2007
 * Description        : Main program body
@@ -25,8 +25,8 @@ GPIO_InitTypeDef GPIO_InitStructure;
 int main(void)
 {
   config();
-  timer();
+  LED();
   return 0;
 }
 
-/******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2019 LexiCOM *****END OF FILE****/

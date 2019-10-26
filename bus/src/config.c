@@ -1,4 +1,5 @@
 #include "stm32f10x_lib.h"
+#include "stm32f10x_conf.h"
 ErrorStatus HSEStartUpStatus;
 
 void Delay(uint32_t ms)

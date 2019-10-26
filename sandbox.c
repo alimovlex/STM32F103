@@ -102,7 +102,8 @@ void timer(void)
 
 void usart(void)
 {
-	USART1_Init();
+	usart_init();
+	USARTSend(" Hello.\r\nUSART1 is ready.\r\n");
 }
 
 void sd_card(void)

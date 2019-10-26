@@ -29,7 +29,7 @@ MAIN_OUT_BIN = $(MAIN_OUT).bin
 all: $(MAIN_OUT_ELF) $(MAIN_OUT_BIN)
 
 # main
-$(MAIN_OUT_ELF): main.o sandbox.o bus/src/config.o bus/src/usart.o  lib/libstm32.a
+$(MAIN_OUT_ELF): main.o sandbox.o bus/src/config.o bus/src/usart.o lib/libstm32.a
 	$(LD) $(LDFLAGS) main.o sandbox.o bus/src/config.o bus/src/usart.o lib/libstm32.a --output $@
 
 $(MAIN_OUT_BIN): $(MAIN_OUT_ELF)
