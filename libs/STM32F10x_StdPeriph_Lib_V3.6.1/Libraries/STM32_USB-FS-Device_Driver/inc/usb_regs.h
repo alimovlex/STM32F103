@@ -57,19 +57,19 @@ enum EP_BUF_NUM
 /******************************************************************************/
 
 /* Control register */
-#define CNTR    ((__IO unsigned *)(RegBase + 0x40))
+#define CNTR    ((volatile unsigned *)(RegBase + 0x40))
 /* Interrupt status register */
-#define ISTR    ((__IO unsigned *)(RegBase + 0x44))
+#define ISTR    ((volatile unsigned *)(RegBase + 0x44))
 /* Frame number register */
-#define FNR     ((__IO unsigned *)(RegBase + 0x48))
+#define FNR     ((volatile unsigned *)(RegBase + 0x48))
 /* Device address register */
-#define DADDR   ((__IO unsigned *)(RegBase + 0x4C))
+#define DADDR   ((volatile unsigned *)(RegBase + 0x4C))
 /* Buffer Table address register */
-#define BTABLE  ((__IO unsigned *)(RegBase + 0x50))
+#define BTABLE  ((volatile unsigned *)(RegBase + 0x50))
 /******************************************************************************/
 /*                         Endpoint registers                                 */
 /******************************************************************************/
-#define EP0REG  ((__IO unsigned *)(RegBase)) /* endpoint 0 register address */
+#define EP0REG  ((volatile unsigned *)(RegBase)) /* endpoint 0 register address */
 
 /* Endpoint Addresses (w/direction) */
 #define EP0_OUT     ((uint8_t)0x00)  
@@ -611,7 +611,7 @@ enum EP_BUF_NUM
 
 
 /* External variables --------------------------------------------------------*/
-extern __IO uint16_t wIstr;  /* ISTR register last read value */
+extern volatile uint16_t wIstr;  /* ISTR register last read value */
 
 /* Exported functions ------------------------------------------------------- */
 void SetCNTR(uint16_t /*wRegValue*/);

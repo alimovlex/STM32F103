@@ -3,6 +3,8 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_tim.h"
 #include "config.h"
+#include "FreeRTOS.h"
+#include "task.h"
 //#define SLAVE_ADDRESS		0x08
 GPIO_InitTypeDef GPIOInitStruct;
 

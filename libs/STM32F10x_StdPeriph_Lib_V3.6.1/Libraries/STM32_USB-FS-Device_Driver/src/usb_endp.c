@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    usb_init.c
+  * @file    usb_endp.c
   * @author  MCD Application Team
   * @version V4.0.0
-  * @date    28-August-2012
-  * @brief   Initialization routines & global variables
+  * @date    21-January-2013
+  * @brief   Endpoint routines
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -28,49 +28,51 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usb_lib.h"
+#include "usb_desc.h"
+#include "usb_mem.h"
+#include "hw_config.h"
+#include "usb_istr.h"
+#include "usb_pwr.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+
+/* Interval between sending IN packets in frame number (1 frame = 1ms) */
+#define VCOMPORT_IN_FRAME_INTERVAL             5
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-/*  The number of current endpoint, it will be used to specify an endpoint */
- uint8_t	EPindex;
-/*  The number of current device, it is an index to the Device_Table */
-/* uint8_t	Device_no; */
-/*  Points to the DEVICE_INFO structure of current device */
-/*  The purpose of this register is to speed up the execution */
-DEVICE_INFO *pInformation;
-/*  Points to the DEVICE_PROP structure of current device */
-/*  The purpose of this register is to speed up the execution */
-DEVICE_PROP *pProperty;
-/*  Temporary save the state of Rx & Tx status. */
-/*  Whenever the Rx or Tx state is changed, its value is saved */
-/*  in this variable first and will be set to the EPRB or EPRA */
-/*  at the end of interrupt process */
-uint16_t	SaveState ;
-uint16_t  wInterrupt_Mask;
-DEVICE_INFO	Device_Info;
-USER_STANDARD_REQUESTS  *pUser_Standard_Requests;
-
-/* Extern variables ----------------------------------------------------------*/
+extern volatile uint32_t packet_sent;
+extern volatile uint32_t packet_receive;
+extern volatile uint8_t Receive_Buffer[64];
+uint32_t Receive_length;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
 /*******************************************************************************
-* Function Name  : USB_Init
-* Description    : USB system initialization
+* Function Name  : EP1_IN_Callback
+* Description    :
 * Input          : None.
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void USB_Init(void)
+
+void EP1_IN_Callback (void)
 {
-  pInformation = &Device_Info;
-  pInformation->ControlState = 2;
-  pProperty = &Device_Property;
-  pUser_Standard_Requests = &User_Standard_Requests;
-  /* Initialize devices one by one */
-  pProperty->Init();
+  packet_sent = 1;
+}
+
+/*******************************************************************************
+* Function Name  : EP3_OUT_Callback
+* Description    :
+* Input          : None.
+* Output         : None.
+* Return         : None.
+*******************************************************************************/
+void EP3_OUT_Callback(void)
+{
+  packet_receive = 1;
+  Receive_length = GetEPRxCount(ENDP3);
+  PMAToUserBufferCopy((unsigned char*)Receive_Buffer, ENDP3_RXADDR, Receive_length);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

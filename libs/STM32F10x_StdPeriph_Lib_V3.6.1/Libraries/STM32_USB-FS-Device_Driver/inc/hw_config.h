@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    usb_mem.h
+  * @file    hw_config.h
   * @author  MCD Application Team
   * @version V4.0.0
-  * @date    28-August-2012
-  * @brief   Utility prototypes functions for memory/PMA transfers
+  * @date    21-January-2013
+  * @brief   Hardware Configuration & Setup
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -27,19 +27,34 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __USB_MEM_H
-#define __USB_MEM_H
+#ifndef __HW_CONFIG_H
+#define __HW_CONFIG_H
 
 /* Includes ------------------------------------------------------------------*/
+#include "platform_config.h"
+#include "usb_type.h"
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-void UserToPMABufferCopy(uint8_t *pbUsrBuf, uint16_t wPMABufAddr, uint16_t wNBytes);
-void PMAToUserBufferCopy(uint8_t *pbUsrBuf, uint16_t wPMABufAddr, uint16_t wNBytes);
+/* Exported define -----------------------------------------------------------*/
+#define MASS_MEMORY_START     0x04002000
+#define BULK_MAX_PACKET_SIZE  0x00000040
+#define LED_ON                0xF0
+#define LED_OFF               0xFF
 
+/* Exported functions ------------------------------------------------------- */
+void Set_System(void);
+void Set_USBClock(void);
+void Enter_LowPowerMode(void);
+void Leave_LowPowerMode(void);
+void USB_Interrupts_Config(void);
+void USB_Cable_Config (FunctionalState NewState);
+void Get_SerialNum(void);
+void LCD_Control(void);
+uint32_t CDC_Send_DATA (uint8_t *ptrBuffer, uint8_t Send_length);
+uint32_t CDC_Receive_DATA(void);
 /* External variables --------------------------------------------------------*/
 
-#endif  /*__USB_MEM_H*/
-
+#endif  /*__HW_CONFIG_H*/
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

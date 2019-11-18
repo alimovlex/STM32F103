@@ -820,7 +820,7 @@ void Data_Setup0(void)
   if (ValBit(pInformation->USBbmRequestType, 7))
   {
     /* Device ==> Host */
-    __IO uint32_t wLength = pInformation->USBwLength;
+    volatile uint32_t wLength = pInformation->USBwLength;
      
     /* Restrict the data length to be the one host asks for */
     if (pInformation->Ctrl_Info.Usb_wLength > wLength)

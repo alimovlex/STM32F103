@@ -32,8 +32,8 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-__IO uint16_t SaveRState;
-__IO uint16_t SaveTState;
+volatile uint16_t SaveRState;
+volatile uint16_t SaveTState;
 
 /* Extern variables ----------------------------------------------------------*/
 extern void (*pEpInt_IN[7])(void);    /*  Handles IN  interrupts   */
@@ -52,7 +52,7 @@ extern void (*pEpInt_OUT[7])(void);   /*  Handles OUT interrupts   */
 *******************************************************************************/
 void CTR_LP(void)
 {
-  __IO uint16_t wEPVal = 0;
+  volatile uint16_t wEPVal = 0;
   /* stay in loop while pending interrupts */
   while (((wIstr = _GetISTR()) & ISTR_CTR) != 0)
   {
