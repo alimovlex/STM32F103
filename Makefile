@@ -1,79 +1,39 @@
-# setup
-COMPILE_OPTS = -mcpu=cortex-m3 -mthumb -Wall -g -O0
-INCLUDE_DIRS = -I . -I lib/inc -I bus/inc -I sd/inc
-LIBRARY_DIRS = -L lib
-
-CC = arm-none-eabi-gcc
-CFLAGS = $(COMPILE_OPTS) $(INCLUDE_DIRS)
+# general Makefile
+include Makefile.common
+LDFLAGS=$(COMMONFLAGS) -fno-exceptions -ffunction-sections -fdata-sections -L$(LIBDIR) -nostartfiles -Wl,--gc-sections,-Tlinker.ld
+LDLIBS+=-lm
+LDLIBS+=-lstm32
+STARTUP=startup.c
 SF=st-flash
-CXX = arm-none-eabi-g++
-CXXFLAGS = $(COMPILE_OPTS) $(INCLUDE_DIRS)
-
-AS = arm-none-eabi-gcc
-ASFLAGS = $(COMPILE_OPTS) -c
-
-LD = arm-none-eabi-gcc
-LDFLAGS = -Wl,--gc-sections,-Map=$@.map,-cref,-u,Reset_Handler $(INCLUDE_DIRS) $(LIBRARY_DIRS) -T stm32.ld
-
-OBJCP = arm-none-eabi-objcopy
-OBJCPFLAGS = -O binary
-
-AR = arm-none-eabi-ar
-ARFLAGS = cr
-
-MAIN_OUT = main
-MAIN_OUT_ELF = $(MAIN_OUT).elf
-MAIN_OUT_BIN = $(MAIN_OUT).bin
-
-# all
-all: $(MAIN_OUT_ELF) $(MAIN_OUT_BIN)
-
-# main
-$(MAIN_OUT_ELF): main.o sandbox.o bus/src/config.o bus/src/usart.o lib/libstm32.a
-	$(LD) $(LDFLAGS) main.o sandbox.o bus/src/config.o bus/src/usart.o lib/libstm32.a --output $@
-
-$(MAIN_OUT_BIN): $(MAIN_OUT_ELF)
-	$(OBJCP) $(OBJCPFLAGS) $< $@
-
-
-# flash
+all: libs src
+	$(CC) -o $(PROGRAM).elf $(LDFLAGS) \
+	-Wl,--whole-archive \
+	src/app.a \
+	-Wl,--no-whole-archive \
+	$(LDLIBS)
+	$(OBJCOPY) -O ihex $(PROGRAM).elf $(PROGRAM).hex
+	$(OBJCOPY) -O binary $(PROGRAM).elf $(PROGRAM).bin
+	#Extract info contained in ELF to readable text-files:
+	arm-none-eabi-readelf -a $(PROGRAM).elf > $(PROGRAM).info_elf
+	arm-none-eabi-size -d -B -t $(PROGRAM).elf > $(PROGRAM).info_size
+	arm-none-eabi-objdump -S $(PROGRAM).elf > $(PROGRAM).info_code
+	arm-none-eabi-nm -t x -S --numeric-sort -s $(PROGRAM).elf > $(PROGRAM).info_symbol
+.PHONY: libs src clean tshow
+libs:
+	$(MAKE) -C libs $@
+src:
+	$(MAKE) -C src $@
 flash:
-	$(SF) write $(MAIN_OUT).bin 0x8000000 
-
-
-# libstm32.a
-LIBSTM32_OUT = lib/libstm32.a
-
-LIBSTM32_OBJS = \
- lib/src/stm32f10x_adc.o \
- lib/src/stm32f10x_bkp.o \
- lib/src/stm32f10x_can.o \
- lib/src/stm32f10x_dma.o \
- lib/src/stm32f10x_exti.o \
- lib/src/stm32f10x_flash.o \
- lib/src/stm32f10x_gpio.o \
- lib/src/stm32f10x_i2c.o \
- lib/src/stm32f10x_iwdg.o \
- lib/src/stm32f10x_lib.o \
- lib/src/stm32f10x_nvic.o \
- lib/src/stm32f10x_pwr.o \
- lib/src/stm32f10x_rcc.o \
- lib/src/stm32f10x_rtc.o \
- lib/src/stm32f10x_spi.o \
- lib/src/stm32f10x_systick.o \
- lib/src/stm32f10x_tim.o \
- lib/src/stm32f10x_tim1.o \
- lib/src/stm32f10x_usart.o \
- lib/src/stm32f10x_wwdg.o \
- lib/src/cortexm3_macro.o \
- lib/src/stm32f10x_vector.o \
- lib/src/stm32f10x_it.o
-
-$(LIBSTM32_OUT): $(LIBSTM32_OBJS)
-	$(AR) $(ARFLAGS) $@ $(LIBSTM32_OBJS)
-
-$(LIBSTM32_OBJS): stm32f10x_conf.h
-
-
+	$(SF) write $(PROGRAM).bin 0x8000000
 clean:
-	-rm *.o lib/src/*.o $(LIBSTM32_OUT) $(MAIN_OUT_ELF) $(MAIN_OUT_BIN)
+	$(MAKE) -C src $@
+	$(MAKE) -C libs $@
+	rm -f $(PROGRAM).elf $(PROGRAM).hex $(PROGRAM).bin $(PROGRAM).info_elf $(PROGRAM).info_size
+	rm -f $(PROGRAM).info_code
+	rm -f $(PROGRAM).info_symbol
+tshow:
+	@echo "######################################################################################################"
+	@echo "######## optimize settings: $(InfoTextLib), $(InfoTextSrc)"
+	@echo "######################################################################################################"
+#flash:
+        # ./jtagprog.pl
