@@ -10,11 +10,16 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_flash.h"
 #include "sandbox.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "config.h"
+#include "tutorial.h"
 
-
-int main(int argc, char *argv[])
+int main(void)
 {
-    //button();
-    LED();
+    sandbox();
+    return 0;
 }
+
+
 

@@ -5,6 +5,7 @@ LDLIBS+=-lm
 LDLIBS+=-lstm32
 STARTUP=startup.c
 SF=st-flash
+OC=openocd
 all: libs src
 	$(CC) -o $(PROGRAM).elf $(LDFLAGS) \
 	-Wl,--whole-archive \
@@ -25,6 +26,8 @@ src:
 	$(MAKE) -C src $@
 flash:
 	$(SF) write $(PROGRAM).bin 0x8000000
+flashit: 
+	$(OC) -f target/bluepill.cfg -c init -c "reset halt" -c "flash write_image erase $(PROGRAM).bin 0x8000000" -c "verify_image $(PROGRAM).bin" -c reset -c shutdown
 clean:
 	$(MAKE) -C src $@
 	$(MAKE) -C libs $@

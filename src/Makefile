@@ -1,7 +1,7 @@
 # src Makefile
 include ../Makefile.common
 OBJS+=startup.o
-OBJS+=main.o sandbox.o config.o
+OBJS+=main.o sandbox.o config.o tutorial.o
 all: src
 src: app.a
 app.a: $(OBJS)
