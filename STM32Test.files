@@ -1,7 +1,6 @@
-inc/tutorial.h
-src/tutorial.c
 inc/config.h
 inc/sandbox.h
+inc/tutorial.h
 libs/STM32F10x_StdPeriph_Lib_V3.6.1/Libraries/CMSIS/Device/ST/STM32F10x/Include/stm32f10x.h
 libs/STM32F10x_StdPeriph_Lib_V3.6.1/Libraries/CMSIS/Device/ST/STM32F10x/Include/system_stm32f10x.h
 libs/STM32F10x_StdPeriph_Lib_V3.6.1/Libraries/CMSIS/Device/ST/STM32F10x/Source/Templates/system_stm32f10x.c
@@ -123,3 +122,4 @@ src/config.c
 src/main.c
 src/sandbox.c
 src/startup.c
+src/tutorial.c

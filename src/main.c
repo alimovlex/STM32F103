@@ -9,16 +9,21 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_flash.h"
+#include "stm32f10x_usart.h"
 #include "sandbox.h"
+#include "misc.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "config.h"
 #include "tutorial.h"
 
+
 int main(void)
 {
-    sandbox();
-    return 0;
+  sandbox();
+  //timer();
+   //button();
+
 }
 
 

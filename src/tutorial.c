@@ -22,10 +22,24 @@ void vT_led(void *p)
     }
 }
 
+void vT_timer(void *p)
+{
+
+    SetSysClockToHSE();
+    init_leds();
+    GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+    init_timer();
+    for(;;)
+    {
+
+    }
+}
+
 void sandbox()
 {
     SystemInit();
     init_leds();
+    xTaskCreate(vT_timer, (const char*) "LED Task", 128, NULL, 1, NULL);
     xTaskCreate(vT_led, (const char*) "LED Task", 128, NULL, 1, NULL);
     // Start RTOS scheduler
     vTaskStartScheduler();
