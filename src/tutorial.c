@@ -5,6 +5,7 @@
 #include "config.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 //#define SLAVE_ADDRESS		0x08
 GPIO_InitTypeDef GPIOInitStruct;
 
@@ -39,7 +40,7 @@ void sandbox()
 {
     SystemInit();
     init_leds();
-    xTaskCreate(vT_timer, (const char*) "LED Task", 128, NULL, 1, NULL);
+    xTaskCreate(vT_timer, (const char*) "Timer Task", 128, NULL, 1, NULL);
     xTaskCreate(vT_led, (const char*) "LED Task", 128, NULL, 1, NULL);
     // Start RTOS scheduler
     vTaskStartScheduler();
@@ -51,3 +52,4 @@ void vApplicationStackOverflowHook(xTaskHandle *pxTask, signed char *pcTaskName)
 // 	fflush(stdout);
 // 	assert(false);
 }
+
