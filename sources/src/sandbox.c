@@ -11,7 +11,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 //#define SLAVE_ADDRESS		0x08
-GPIO_InitTypeDef GPIOInitStruct;
 extern volatile uint8_t Receive_Buffer[64];
 extern volatile uint32_t Receive_length ;
 extern volatile uint32_t length ;
@@ -19,7 +18,30 @@ uint8_t Send_Buffer[64];
 uint32_t packet_sent=1;
 uint32_t packet_receive=1;
 
-void timer()
+void LED_test()
+{
+    int i;
+    init_leds();
+    while (1) {
+
+
+        /* Toggle LED which connected to PC13*/
+        GPIO_ResetBits(GPIOC, GPIO_Pin_13); // Set C13 to Low level ("0")
+
+        /* delay */
+        for(i=0;i<0x100000;i++);
+
+        /* Toggle LED which connected to PC13*/
+        GPIO_SetBits(GPIOC, GPIO_Pin_13); // Set C13 to High level ("1")
+
+        /* delay */
+        for(i=0;i<0x100000;i++);
+    }
+
+
+}
+
+void timer_test()
 {
         SetSysClockToHSE();
         init_leds();
@@ -31,7 +53,7 @@ void timer()
         }
 }
 
-void button(void)
+void button_test(void)
 {
     init_button();
     init_leds();
@@ -52,7 +74,7 @@ void button(void)
 	}
 }
 
-void UART1()
+void UART_test()
 {
     GPIO_InitTypeDef GPIO_InitStructure;
        USART_InitTypeDef USART_InitStructure;
@@ -117,7 +139,7 @@ void UART1()
        }
 }
 
-void usb_dev()
+void USB_test()
 {
     Set_System();
     SetSysClockTo72();
@@ -155,8 +177,11 @@ void usb_dev()
     }
 }
 
-void sd_card(void)
+void SD_Card_test(void)
 {
 
 }
+
+
+
 

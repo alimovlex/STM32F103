@@ -1,7 +1,8 @@
-void button(void);
-void sd_card(void);
-void UART1(void);
-void usb_dev(void);
-void timer(void);
+void button_test(void);
+void SD_Card_test(void);
+void UART_test();
+void USB_test();
+void timer_test(void);
+void LED_test();
 
 

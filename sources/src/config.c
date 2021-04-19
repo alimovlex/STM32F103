@@ -4,35 +4,9 @@
 #include "stm32f10x_tim.h"
 #include "misc.h"
 #include "config.h"
+GPIO_InitTypeDef GPIOInitStruct;
 // For store tick counts in us
 static __IO uint32_t usTicks;
-void DelayInit()
-{
-    // Update SystemCoreClock value
-    SystemCoreClockUpdate();
-    // Configure the SysTick timer to overflow every 1 us
-    SysTick_Config(SystemCoreClock / 1000000);
-}
-void Delay(uint32_t ms)
-{
-        volatile uint32_t nCount;
-        RCC_ClocksTypeDef RCC_Clocks;
-        RCC_GetClocksFreq (&RCC_Clocks);
-
-        nCount=(RCC_Clocks.HCLK_Frequency/10000)*ms;
-        for (; nCount!=0; nCount--);
-}
-
-
-void DelayMC(uint32_t mc)
-{
-        volatile uint32_t nCount;
-        RCC_ClocksTypeDef RCC_Clocks;
-        RCC_GetClocksFreq (&RCC_Clocks);
-
-        nCount=(RCC_Clocks.HCLK_Frequency/10000000)*mc;
-        for (; nCount!=0; nCount--);
-}
 
 void SetSysClockTo72(void)
 {
