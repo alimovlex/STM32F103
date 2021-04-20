@@ -1,3 +1,13 @@
+/*
+    sandbox.c
+
+    This file represents the testing functions for STM32F103C8T6 board.
+
+    STM32F103
+
+    Created by alimovlex.
+    Copyright (c) 2020 alimovlex. All rights reserved.
+*/
 #include "stm32f10x.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"

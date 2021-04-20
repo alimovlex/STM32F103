@@ -1,10 +1,10 @@
-/************************************************************************************************************
- * Test-program for Olimex “STM32-H103”, header board for “STM32F103RBT6”.
- * After program start green LED (STAT) will blink, when jumper LED_E is closed.
- *
- * Running Release code will set ReadOutProtection (see down) via function FLASH_ReadOutProtection_Enable().
- * Do not run Release code until you know how to set back ReadOutProtection!
- ************************************************************************************************************/
+/*
+    main.c
+    STM32F103
+
+    Created by alimovlex.
+    Copyright (c) 2020 alimovlex. All rights reserved.
+*/
 #include "stm32f10x.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"

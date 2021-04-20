@@ -1,6 +1,8 @@
-void Delay(uint32_t ms);
-void DelayMC(uint32_t mc);
-void DelayInit(void);
+//
+// Created by alimovlex
+//
+
+//
 void SetSysClockTo72(void);
 void SetSysClockToHSE(void);
 void TIM4_IRQHandler(void);
