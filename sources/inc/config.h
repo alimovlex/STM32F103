@@ -3,7 +3,7 @@
 //
 
 //
-void SetSysClockTo72(void);
+//void SetSysClockTo72(void);
 void SetSysClockToHSE(void);
 void TIM4_IRQHandler(void);
 void init_leds(void);

@@ -19,11 +19,10 @@
 
 int main(void)
 {
-    //sandbox();
+    sandbox();
     //timer_test();
     //button();
-    //usb_dev();
-    LED_test();
+    //LED_test();
 }
 
 
