@@ -20,6 +20,7 @@
 #include "usb_pwr.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include <string.h>
 //#define SLAVE_ADDRESS		0x08
 
 void LED_test()
@@ -76,6 +77,34 @@ void button_test(void)
 			GPIO_SetBits(GPIOC, GPIO_Pin_13);
 		}
 	}
+}
+
+void usart_test(void) {
+    int i;
+    init_usart();
+
+    while (1)
+    {
+        /* Wait until there's data in the receive data register */
+        while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+
+        /* Read a byte */
+        rxbuf[rxbuf_pos++] = USART_ReceiveData(USART1);
+
+        /* Check if the previous byte was a newline */
+        if ((rxbuf[rxbuf_pos-1] == '\n' || rxbuf[rxbuf_pos-1] == '\r') && rxbuf_pos != 0) {
+
+            /* Send the line back */
+            for (i = 0; i < rxbuf_pos; i++) {
+                USART_SendData(USART1, rxbuf[i]);
+
+                /* Wait until the byte has been transmitted */
+                while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+            }
+
+            rxbuf_pos = 0;
+        }
+    }
 }
 
 void SD_Card_test(void)

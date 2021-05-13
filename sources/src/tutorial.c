@@ -46,12 +46,42 @@ void vT_timer(void *p)
     }
 }
 
+void vT_usart(void *p)
+{
+    init_usart();
+    int i;
+    for(;;)
+    {
+        /* Wait until there's data in the receive data register */
+        while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
+
+        /* Read a byte */
+        rxbuf[rxbuf_pos++] = USART_ReceiveData(USART1);
+
+        /* Check if the previous byte was a newline */
+        if ((rxbuf[rxbuf_pos-1] == '\n' || rxbuf[rxbuf_pos-1] == '\r') && rxbuf_pos != 0) {
+
+            /* Send the line back */
+            for (i = 0; i < rxbuf_pos; i++) {
+                USART_SendData(USART1, rxbuf[i]);
+
+                /* Wait until the byte has been transmitted */
+                while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+            }
+
+            rxbuf_pos = 0;
+        }
+    }
+}
+
+
 void sandbox()
 {
     SystemInit();
     init_leds();
     xTaskCreate(vT_timer, (const char*) "Timer Task", 128, NULL, 1, NULL);
     xTaskCreate(vT_led, (const char*) "LED Task", 128, NULL, 1, NULL);
+    xTaskCreate(vT_usart, (const char*) "USART Task", 128, NULL, 1, NULL);
     // Start RTOS scheduler
     vTaskStartScheduler();
 }

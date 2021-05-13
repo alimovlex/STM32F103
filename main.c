@@ -14,7 +14,6 @@
 #include "sandbox.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "config.h"
 #include "tutorial.h"
 
 int main(void)
@@ -23,6 +22,7 @@ int main(void)
     //timer_test();
     //button();
     //LED_test();
+    //usart_test();
 }
 
 

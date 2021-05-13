@@ -12,9 +12,14 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_tim.h"
+#include "stm32f10x_usart.h"
 #include "misc.h"
 #include "config.h"
 GPIO_InitTypeDef GPIOInitStruct;
+USART_InitTypeDef USART_InitStructure;
+uint16_t rxbuf[64];
+int rxbuf_pos = 0;
+
 
 void SetSysClockToHSE(void)
 {
@@ -71,7 +76,6 @@ void TIM4_IRQHandler(void)
 
 void init_leds()
 {
-
  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
  GPIOInitStruct.GPIO_Pin = GPIO_Pin_13;
  GPIOInitStruct.GPIO_Speed = GPIO_Speed_10MHz;
@@ -108,4 +112,39 @@ void init_button()
     GPIOInitStruct.GPIO_Speed = GPIO_Speed_2MHz;
     GPIOInitStruct.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_Init(GPIOA, &GPIOInitStruct);
+}
+
+void init_usart()
+{
+    /* Enable peripheral clocks for USART1 on GPIOA */
+    RCC_APB2PeriphClockCmd(
+            RCC_APB2Periph_USART1 |
+            RCC_APB2Periph_GPIOA |
+            RCC_APB2Periph_AFIO, ENABLE);
+
+    /* Configure PA9 and PA10 as USART1 TX/RX */
+
+    /* PA9 = alternate function push/pull output */
+    GPIOInitStruct.GPIO_Pin = GPIO_Pin_9;
+    GPIOInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIOInitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(GPIOA, &GPIOInitStruct);
+
+    /* PA10 = floating input */
+    GPIOInitStruct.GPIO_Pin = GPIO_Pin_10;
+    GPIOInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOA, &GPIOInitStruct);
+
+    /* Configure and initialize usart... */
+    USART_InitStructure.USART_BaudRate = 115200;
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+    USART_Init(USART1, &USART_InitStructure);
+
+    /* Enable USART1 */
+    USART_Cmd(USART1, ENABLE);
 }
