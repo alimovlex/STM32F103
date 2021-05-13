@@ -15,14 +15,14 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "tutorial.h"
-
 int main(void)
 {
-    sandbox();
+    //sandbox();
     //timer_test();
     //button();
     //LED_test();
     //usart_test();
+    lcd_test();
 }
 
 

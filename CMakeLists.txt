@@ -43,10 +43,12 @@ file(
         "libraries/freertos/src/*.c"
         "libraries/STM32F10x_Drivers/inc/*.h"
         "libraries/STM32F10x_Drivers/src/*.c"
-        "sources/src/*.c*"
-        "sources/inc/*.h*"
         "libraries/STM32_USB-FS-Device_Driver/inc/*.h"
         "libraries/STM32_USB-FS-Device_Driver/src/*.c"
+        "libraries/lcd/inc/*.h"
+        "libraries/lcd/src/*.c"
+        "sources/src/*.c*"
+        "sources/inc/*.h*"
         "./main.c"
 )
 
@@ -57,6 +59,7 @@ include_directories(
         libraries/freertos/inc/
         libraries/STM32F10x_Drivers/inc/
         libraries/STM32_USB-FS-Device_Driver/inc/
+        libraries/lcd/inc
 )
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})

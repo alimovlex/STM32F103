@@ -20,6 +20,8 @@
 #include "usb_pwr.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "LiquidCrystal_I2C.h"
+#include "lcd_i2c.h"
 #include <string.h>
 //#define SLAVE_ADDRESS		0x08
 
@@ -105,6 +107,86 @@ void usart_test(void) {
             rxbuf_pos = 0;
         }
     }
+}
+
+void lcd_test(void)
+{
+    int i;
+/*  while(1)
+  {
+    if((USART1->SR & USART_SR_RXNE)) //????????? ??????????? ?????? ?? ??????????
+    {
+      data = USART1->DR; //????????? ???????? ??????
+    //  Usart1_Send_symbol(data); //? ??? ?? ???????? ?? ???????
+      break;
+    }
+  }*/
+    Delay(3000);
+//  Usart1_Send_String("Start");
+
+    LCDI2C_init(0x27,20,4);
+    // ------- Quick 3 blinks of backlight  -------------
+
+    for( i = 0; i< 3; i++)
+    {
+        LCDI2C_backlight();
+        Delay(250);
+        LCDI2C_noBacklight();
+        Delay(250);
+    }
+    LCDI2C_backlight(); // finish with backlight on
+    LCDI2C_write(53);
+//  Usart1_Send_String("End");
+    Delay(2000);
+    LCDI2C_clear();
+
+    displayKeyCodes();
+
+    Delay(2000);
+/*
+  LCDI2C_createChar(0, bell);
+//  Usart1_Send_String("char1");
+  LCDI2C_createChar(1, note);
+  LCDI2C_createChar(2, clock);
+  LCDI2C_createChar(3, heart);
+  LCDI2C_createChar(4, duck);
+  LCDI2C_createChar(5, check);
+  LCDI2C_createChar(6, cross);
+  LCDI2C_createChar(7, retarrow);
+  LCDI2C_clear();
+//  Usart1_Send_String("endchar");
+
+//    int i;
+  for (i=0; i<8; i++) {
+        LCDI2C_write(i);
+  }
+
+  Delay(3000);*/
+    LCDI2C_createChar(0, habr1);
+    LCDI2C_createChar(1, habr2);
+    LCDI2C_createChar(2, habr3);
+    LCDI2C_createChar(3, habr4);
+    LCDI2C_createChar(4, habr5);
+    LCDI2C_createChar(5, habr6);
+    LCDI2C_createChar(6, habr7);
+    LCDI2C_createChar(7, habr8);
+
+    LCDI2C_clear();
+    LCDI2C_write_String("HELLO MGTOW!");
+    LCDI2C_setCursor(16,0);
+    LCDI2C_write(0);
+    LCDI2C_write(1);
+    LCDI2C_write(2);
+    LCDI2C_write(3);
+    LCDI2C_setCursor(16,1);
+    LCDI2C_write(4);
+    LCDI2C_write(5);
+    LCDI2C_write(6);
+    LCDI2C_write(7);
+    LCDI2C_setCursor(16,2);
+    LCDI2C_write(201);
+    LCDI2C_write(177);
+    LCDI2C_write(162);
 }
 
 void SD_Card_test(void)
