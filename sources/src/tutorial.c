@@ -16,6 +16,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "LiquidCrystal_I2C.h"
+#include "lcd_i2c.h"
 //#define SLAVE_ADDRESS		0x08
 
 
@@ -23,7 +25,7 @@ void vT_led(void *p)
 {
     // Block for 100ms.
     const portTickType xDelay = 100 / portTICK_RATE_MS;
-
+    init_leds();
     for(;;)
     {
         GPIO_SetBits(GPIOC, GPIO_Pin_13);
@@ -74,14 +76,31 @@ void vT_usart(void *p)
     }
 }
 
+void vT_lcd(void *p)
+{
+    int i;
+    LCDI2C_init(0x27,20,4);
+    // ------- Quick 3 blinks of backlight  -------------
+    for( i = 0; i< 3; i++)
+    {
+        LCDI2C_backlight();
+        Delay(250);
+        LCDI2C_noBacklight();
+        Delay(250);
+    }
+    LCDI2C_backlight(); // finish with backlight on
+    LCDI2C_write_String("HELLO MGTOW!");
+}
+
+
 
 void sandbox()
 {
     SystemInit();
-    init_leds();
     xTaskCreate(vT_timer, (const char*) "Timer Task", 128, NULL, 1, NULL);
     xTaskCreate(vT_led, (const char*) "LED Task", 128, NULL, 1, NULL);
     xTaskCreate(vT_usart, (const char*) "USART Task", 128, NULL, 1, NULL);
+    xTaskCreate(vT_lcd, (const char*) "LCD Task", 128, NULL, 1, NULL);
     // Start RTOS scheduler
     vTaskStartScheduler();
 }
